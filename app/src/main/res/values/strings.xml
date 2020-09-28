@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Alarm Notificator</string>
+    <string name="button_text">Notificate Me!</string>
 </resources>
