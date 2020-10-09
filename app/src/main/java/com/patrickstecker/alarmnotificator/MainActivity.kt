@@ -1,15 +1,21 @@
 package com.patrickstecker.alarmnotificator
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.AlarmClock
+import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
+import com.patrickstecker.alarmnotificator.models.Lecture
+import java.time.LocalTime
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,24 +29,82 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val lecturePlanAnalyzer = LecturePlanAnalyzer()
         val show = findViewById<Button>(R.id.notify_btn)
-        val tv = findViewById<TextView>(R.id.textview)
+        val textView: TextView = findViewById(R.id.textview)
         val btn1 = findViewById<Button>(R.id.btn1)
         val btn2 = findViewById<Button>(R.id.btn2)
 
         show.setOnClickListener {
-            thrwoNotification()
+            throwNotification()
         }
+        doAsync {
+            val lesson: Lecture = lecturePlanAnalyzer.getFirstClassOfToday(1)
+            if (
+                lesson.times.beginHour == 0 &&
+                lesson.times.beginMin == 0 &&
+                lesson.times.endHour == 0 &&
+                lesson.times.endMin == 0
+            ){
+                runOnUiThread {
+                    textView.text = lesson.name
+                    btn1.text = "--:--"
+                    btn2.text = "--:--"
+                }
+            } else {
+                runOnUiThread {
+                    textView.text = ("Erste Vorlesung am " + lesson.date + ":" +
+                                    "\n\tName: " + lesson.name +
+                                    "\n\tVon: " + formatTime(lesson.times.beginHour, lesson.times.beginMin) +
+                                    "\n\tBis: " + formatTime(lesson.times.endHour, lesson.times.endMin))
+                    btn1.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 60)
+                    btn2.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 30)
+                }
+            }
+        }.execute()
+
         btn1.setOnClickListener {
-            planAlarm(8,0)
+            val text = btn1.text.toString()
+            planAlarm(getHourOfTime(text),getMinutesOfTime(text))
         }
 
         btn2.setOnClickListener {
-            planAlarm(8,30)
+            val text = btn2.text.toString()
+            planAlarm(getHourOfTime(text),getMinutesOfTime(text))
         }
     }
 
-    fun thrwoNotification() {
+    private fun minusMins(hours: Int, mins: Int, minus: Int): String {
+        var mins = mins - minus
+        var hours = hours
+        while (mins < 0) {
+            mins += 60
+            hours -= 1
+        }
+        return formatTime(hours, mins)
+    }
+
+    private fun formatTime(hours: Int, mins: Int): String {
+        var h: String = hours.toString()
+        var m: String = mins.toString()
+        if (h.length < 2) {
+            h = "0$h"
+        }
+        if (m.length < 2) {
+            m = "0$m"
+        }
+        return "$h:$m"
+    }
+
+    private fun getHourOfTime(time: String): Int {
+        return time.split(":")[0].toInt()
+    }
+
+    private fun getMinutesOfTime(time: String): Int {
+        return time.split(":")[1].toInt()
+    }
+
+    private fun throwNotification() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val intent = Intent(applicationContext, MainActivity::class.java)
@@ -74,5 +138,12 @@ class MainActivity : AppCompatActivity() {
 ////        alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.timeInMillis, pendingIntent)
 //        val alarmInfo = AlarmManager.AlarmClockInfo(targetCal.timeInMillis, pendingIntent)
  //       alarmManager.setAlarmClock(alarmInfo, pendingIntent)
+    }
+}
+
+class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
+    override fun doInBackground(vararg params: Void?): Void? {
+        handler()
+        return null
     }
 }
