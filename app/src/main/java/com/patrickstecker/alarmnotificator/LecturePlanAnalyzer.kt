@@ -27,7 +27,7 @@ class LecturePlanAnalyzer {
     private fun convertElementToLecture(element: Element, date: String): Lecture {
         val title = element.getElementsByClass("cal-title")?.first()?.text()
         val times = getLectureTimes(element.getElementsByClass("cal-time").first().text())
-        return Lecture(title!!, times, date)
+        return Lecture(title!!, times, date, true)
     }
 
     fun getFirstClassOfToday(dayOffset: Long): Lecture {
@@ -49,7 +49,7 @@ class LecturePlanAnalyzer {
                 }
             }
         }
-        return Lecture("Am $d.$m. findet keine Vorlesung statt", Times(0, 0, 0, 0), "$d.$m.")
+        return Lecture("Am $d.$m. findet keine Vorlesung statt", Times(0, 0, 0, 0), "$d.$m.", false)
     }
 
     fun getLectureTimes(times: String): Times {
@@ -61,5 +61,9 @@ class LecturePlanAnalyzer {
         val beginHour = time[0].split(":")[0].toInt()
 
         return  Times(endMin, endHour, beginMin, beginHour)
+    }
+
+    fun tomorrowIsALesson(): Boolean {
+        return getFirstClassOfToday(1).isLecture
     }
 }
