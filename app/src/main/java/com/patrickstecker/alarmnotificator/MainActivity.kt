@@ -4,10 +4,12 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.opengl.Visibility
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.provider.AlarmClock
+import android.view.View
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.Switch
@@ -25,7 +27,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val lecturePlanAnalyzer = LecturePlanAnalyzer()
-        val show = findViewById<Button>(R.id.notify_btn)
         val textView: TextView = findViewById(R.id.textview)
         val btn1 = findViewById<Button>(R.id.btn1)
         val btn2 = findViewById<Button>(R.id.btn2)
@@ -40,9 +41,6 @@ class MainActivity : AppCompatActivity() {
         deleteAlarmButton.setOnClickListener {
             alarm.cancelAlarm(this)
         }
-        show.setOnClickListener {
-            alarm.fireTestAlarm(this)
-        }
 
         doAsync {
             val lesson: Lecture = lecturePlanAnalyzer.getFirstClassOfToday(1)
@@ -56,8 +54,8 @@ class MainActivity : AppCompatActivity() {
                     textView.text = lesson.name
                     btn1.text = "--:--"
                     btn2.text = "--:--"
-                    btn1.isClickable = false
-                    btn2.isClickable = false
+                    btn1.visibility = View.GONE
+                    btn2.visibility = View.GONE
                 }
             } else {
                 runOnUiThread {
