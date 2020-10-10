@@ -3,4 +3,7 @@
     <string name="button_text">Test Notification</string>
     <string name="delete_notification_alarms">Deactivate Notifications</string>
     <string name="activate_notifications">Activate Notifications</string>
+    <string name="alarm">Alarm</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="todo">ToDo</string>
 </resources>

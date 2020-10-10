@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_alarm"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_alarm_24"
+        android:title="@string/alarm"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_radio_button_unchecked_24"
+        android:title="@string/dashboard"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_todos"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_storage_24"
+        android:title="@string/todo"
+        app:showAsAction="ifRoom" />
+</menu>
