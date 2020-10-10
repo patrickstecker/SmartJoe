@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Alarm Notificator</string>
+    <string name="alarm">Wecker</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="todo">ToDo</string>
+    <string name="deactivate">Deaktivieren</string>
+    <string name="cancel">Abbrechen</string>
+
+    <!-- Alarm Notificator -->
+    <string name="delete_notification_alarms">Benachrichtigungen deaktivieren</string>
+    <string name="activate_notifications">Benachrichtigungen aktivieren</string>
+    <string name="deactivate_notification_dialog_title">Benachrichtigungen deaktivieren</string>
+    <string name="deactivate_notification_dialog_text">Willst du wirklich alle Benachrichtigungen deaktivieren?</string>
+
+    <!-- Dashboard -->
+    <string name="card_welcome_text">Willkommen in deinem Organizer!</string>
+    <string name="card_welcome_title">Hallo Patrick!</string>
+    <string name="card_uni_text">Deine heutigen Vorlesungen</string>
+    <string name="card_uni_title">Vorlesungen</string>
+    <string name="no_class_today">Du hast heute keine Vorlesungen.</string>
+</resources>

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.patrickstecker.alarmnotificator.Alarm
 import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
@@ -21,10 +22,6 @@ class AlarmNotificatorFragment: Fragment() {
         fun newInstance(): AlarmNotificatorFragment {
             return AlarmNotificatorFragment()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -47,7 +44,16 @@ class AlarmNotificatorFragment: Fragment() {
             alarm.activateNotifications(view.context)
         }
         deleteAlarmButton.setOnClickListener {
-            alarm.cancelAlarm(view.context)
+            MaterialAlertDialogBuilder(view.context)
+                .setTitle(R.string.deactivate_notification_dialog_title)
+                .setMessage(R.string.deactivate_notification_dialog_text)
+                .setNeutralButton(R.string.cancel) { _, _ ->
+
+                }
+                .setPositiveButton(R.string.deactivate) {_, _ ->
+                    alarm.cancelAlarm(view.context)
+                }
+                .show()
         }
         textView.text = ""
         btn1.visibility = View.GONE
