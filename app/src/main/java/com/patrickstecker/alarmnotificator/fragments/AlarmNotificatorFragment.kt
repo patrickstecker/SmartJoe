@@ -4,20 +4,27 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.AlarmClock
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.patrickstecker.alarmnotificator.Alarm
 import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.helper.doAsync
 import com.patrickstecker.alarmnotificator.models.Lecture
+import kotlinx.android.synthetic.main.dashboard_big_list_item.*
+import org.w3c.dom.Text
 
 
 class AlarmNotificatorFragment: Fragment() {
+
+    private val timeHelper = TimeHelper()
+    private val lecturePlanAnalyzer = LecturePlanAnalyzer()
+
     companion object {
         fun newInstance(): AlarmNotificatorFragment {
             return AlarmNotificatorFragment()
@@ -31,12 +38,13 @@ class AlarmNotificatorFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_alarm_notificator, container, false)
         // Inflate the layout for this fragment
-        val lecturePlanAnalyzer = LecturePlanAnalyzer()
-        val textView: TextView = view.findViewById(R.id.textview)
         val btn1 = view.findViewById<Button>(R.id.btn1)
         val btn2 = view.findViewById<Button>(R.id.btn2)
         val deleteAlarmButton: Button = view.findViewById(R.id.deleteAlarms)
         val setAlarms: Button = view.findViewById(R.id.setAlarms)
+        val classesView = view.findViewById<LinearLayout>(R.id.classes_view)
+
+        classesView.visibility = View.INVISIBLE
 
         val alarm = Alarm()
 
@@ -55,7 +63,6 @@ class AlarmNotificatorFragment: Fragment() {
                 }
                 .show()
         }
-        textView.text = ""
         btn1.visibility = View.GONE
         btn2.visibility = View.GONE
 
@@ -68,7 +75,6 @@ class AlarmNotificatorFragment: Fragment() {
                 lesson.times.endMin == 0
             ){
                 activity?.runOnUiThread {
-                    textView.text = lesson.name
                     btn1.text = "--:--"
                     btn2.text = "--:--"
                     btn1.visibility = View.GONE
@@ -76,10 +82,6 @@ class AlarmNotificatorFragment: Fragment() {
                 }
             } else {
                 activity?.runOnUiThread {
-                    textView.text = ("Erste Vorlesung am " + lesson.date + ":" +
-                            "\n\tName: " + lesson.name +
-                            "\n\tVon: " + formatTime(lesson.times.beginHour, lesson.times.beginMin) +
-                            "\n\tBis: " + formatTime(lesson.times.endHour, lesson.times.endMin))
                     btn1.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 60)
                     btn2.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 30)
                     btn1.visibility = View.VISIBLE
@@ -87,6 +89,8 @@ class AlarmNotificatorFragment: Fragment() {
                 }
             }
         }.execute()
+
+        showClasses(view)
 
         btn1.setOnClickListener {
             val text = btn1.text.toString()
@@ -99,6 +103,38 @@ class AlarmNotificatorFragment: Fragment() {
         }
         return view
     }
+
+    private fun showClasses(view: View) {
+        doAsync {
+                val classes = lecturePlanAnalyzer.getClassesOfToday(1)
+
+                val icon = view.findViewById<ImageView>(R.id.icon)
+                val title = view.findViewById<TextView>(R.id.title)
+                val text = view.findViewById<TextView>(R.id.text)
+                val detailsSection = view.findViewById<LinearLayout>(R.id.details_section)
+                val listView = view.findViewById<ListView>(R.id.card_list_view)
+                val classesView = view.findViewById<LinearLayout>(R.id.classes_view)
+
+                detailsSection.visibility = View.INVISIBLE
+                listView.visibility = View.INVISIBLE
+
+                activity?.runOnUiThread{
+                icon.setImageResource(R.drawable.dhbw)
+                title.text = getString(R.string.card_uni_title)
+                text.text = getString(R.string.card_uni_text, classes.first().date)
+
+                if (classes.first().isLecture) {
+                    val adapter = activity?.let { LectureListAdapter (it, classes) }
+                    listView.adapter = adapter
+                    detailsSection.visibility = View.VISIBLE
+                    listView.visibility = View.VISIBLE
+                }
+
+                classesView.visibility = View.VISIBLE
+            }
+        }.execute()
+    }
+
     private fun minusMins(hours: Int, mins: Int, minus: Int): String {
         var mins = mins - minus
         var hours = hours
@@ -106,19 +142,7 @@ class AlarmNotificatorFragment: Fragment() {
             mins += 60
             hours -= 1
         }
-        return formatTime(hours, mins)
-    }
-
-    private fun formatTime(hours: Int, mins: Int): String {
-        var h: String = hours.toString()
-        var m: String = mins.toString()
-        if (h.length < 2) {
-            h = "0$h"
-        }
-        if (m.length < 2) {
-            m = "0$m"
-        }
-        return "$h:$m"
+        return timeHelper.formatTime(hours, mins)
     }
 
     private fun getHourOfTime(time: String): Int {
@@ -135,12 +159,5 @@ class AlarmNotificatorFragment: Fragment() {
         intent.putExtra(AlarmClock.EXTRA_HOUR, hours)
         intent.putExtra(AlarmClock.EXTRA_MINUTES, mins)
         startActivity(intent)
-    }
-
-    class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            handler()
-            return null
-        }
     }
 }

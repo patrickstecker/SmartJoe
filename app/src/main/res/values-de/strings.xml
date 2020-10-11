@@ -16,7 +16,12 @@
     <!-- Dashboard -->
     <string name="card_welcome_text">Willkommen in deinem Organizer!</string>
     <string name="card_welcome_title">Hallo Patrick!</string>
-    <string name="card_uni_text">Deine heutigen Vorlesungen</string>
+    <string name="card_welcome_date_string">Heute ist %1$s der %2$s</string>
+
+    <!-- Lectures -->
+    <string name="no_details">Keine Details vorhanden.</string>
+    <string name="card_uni_text">Deine Vorlesungen am %1$s</string>
     <string name="card_uni_title">Vorlesungen</string>
     <string name="no_class_today">Du hast heute keine Vorlesungen.</string>
+    <string name="no_class_tomorrow">Du hast morgen keine Vorlesungen.</string>
 </resources>
