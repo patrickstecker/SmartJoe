@@ -29,10 +29,11 @@ class LectureListAdapter(
                 TimeHelper().formatTime(item.times.endHour, item.times.endMin)
             )
         if (item.details.isNotEmpty()) {
-            var details = ""
+            var detailsText = ""
             for (i in item.details) {
-                details += (i + "\n")
+                detailsText += (i + "\n")
             }
+            details.text = detailsText
         } else {
             details.setText(R.string.no_details)
         }
