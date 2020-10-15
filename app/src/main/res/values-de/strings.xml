@@ -12,6 +12,7 @@
     <string name="activate_notifications">Benachrichtigungen aktivieren</string>
     <string name="deactivate_notification_dialog_title">Benachrichtigungen deaktivieren</string>
     <string name="deactivate_notification_dialog_text">Willst du wirklich alle Benachrichtigungen deaktivieren?</string>
+    <string name="plan_alarm">Wecker stellen</string>
 
     <!-- Dashboard -->
     <string name="card_welcome_text">Willkommen in deinem Organizer!</string>

@@ -65,8 +65,7 @@
                         android:layout_marginTop="2dp"
                         android:ellipsize="end"
                         android:text="@string/no_class_today"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout

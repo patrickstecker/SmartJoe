@@ -7,10 +7,3 @@ class Lecture (
     val details: ArrayList<String> = ArrayList(),
     val isLecture: Boolean
 )
-
-class Times (
-    val endMin: Int,
-    val endHour: Int,
-    val beginMin: Int,
-    val beginHour: Int
-)

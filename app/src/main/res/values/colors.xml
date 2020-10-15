@@ -5,5 +5,5 @@
     <color name="colorAccent">#468A83</color>
     <color name="background">#323232</color>
     <color name="header">#262626</color>
-    <color name="cardSurface">#59B1A8</color>
+    <color name="cardSurface">@color/colorAccent</color>
 </resources>

@@ -12,6 +12,7 @@
     <string name="activate_notifications">Activate Notifications</string>
     <string name="deactivate_notification_dialog_title">Deactivate Notifications</string>
     <string name="deactivate_notification_dialog_text">Do you want to deactivate all Notifications?</string>
+    <string name="plan_alarm">Plan Alarm</string>
 
     <!-- Dashboard -->
     <string name="card_welcome_text">Welcome to your organizer.</string>

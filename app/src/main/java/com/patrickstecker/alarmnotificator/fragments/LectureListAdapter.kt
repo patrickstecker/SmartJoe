@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.models.Lecture
 
 class LectureListAdapter(
@@ -24,9 +25,11 @@ class LectureListAdapter(
 
         title.text = item.name
         time.text =
-            (TimeHelper().formatTime(item.times.beginHour, item.times.beginMin) +
+            (TimeHelper()
+                .formatTime(item.times.beginHour, item.times.beginMin) +
                 " - " +
-                TimeHelper().formatTime(item.times.endHour, item.times.endMin)
+                TimeHelper()
+                    .formatTime(item.times.endHour, item.times.endMin)
             )
         if (item.details.isNotEmpty()) {
             var detailsText = ""

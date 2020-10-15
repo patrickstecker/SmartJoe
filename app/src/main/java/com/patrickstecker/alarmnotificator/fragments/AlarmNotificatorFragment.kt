@@ -1,28 +1,27 @@
 package com.patrickstecker.alarmnotificator.fragments
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.AlarmClock
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.patrickstecker.alarmnotificator.Alarm
 import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.helper.doAsync
 import com.patrickstecker.alarmnotificator.models.Lecture
-import kotlinx.android.synthetic.main.dashboard_big_list_item.*
-import org.w3c.dom.Text
 
 
 class AlarmNotificatorFragment: Fragment() {
 
-    private val timeHelper = TimeHelper()
+    private val timeHelper =
+        TimeHelper()
     private val lecturePlanAnalyzer = LecturePlanAnalyzer()
 
     companion object {
@@ -38,13 +37,26 @@ class AlarmNotificatorFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_alarm_notificator, container, false)
         // Inflate the layout for this fragment
-        val btn1 = view.findViewById<Button>(R.id.btn1)
-        val btn2 = view.findViewById<Button>(R.id.btn2)
-        val deleteAlarmButton: Button = view.findViewById(R.id.deleteAlarms)
-        val setAlarms: Button = view.findViewById(R.id.setAlarms)
-        val classesView = view.findViewById<LinearLayout>(R.id.classes_view)
 
-        classesView.visibility = View.INVISIBLE
+        showClasses(view)
+        initiateBottomSheet(view)
+        return view
+    }
+
+    private fun initiateBottomSheet(view: View) {
+        val bottomSheetDialog = BottomSheetDialog(view.context)
+        val sheetView = layoutInflater.inflate(R.layout.fragment_alarm_bottom_sheet, null)
+
+        val btnBottomSheetModal = view.findViewById<ImageButton>(R.id.open_bottomsheet)
+        val btn1 = sheetView.findViewById<Button>(R.id.btn1)
+        val btn2 = sheetView.findViewById<Button>(R.id.btn2)
+        val deleteAlarmButton: Button = sheetView.findViewById(R.id.deleteAlarms)
+        val setAlarms: Button = sheetView.findViewById(R.id.setAlarms)
+        bottomSheetDialog.setContentView(sheetView)
+
+        btnBottomSheetModal.setOnClickListener {
+            bottomSheetDialog.show()
+        }
 
         val alarm = Alarm()
 
@@ -90,8 +102,6 @@ class AlarmNotificatorFragment: Fragment() {
             }
         }.execute()
 
-        showClasses(view)
-
         btn1.setOnClickListener {
             val text = btn1.text.toString()
             planAlarm(getHourOfTime(text),getMinutesOfTime(text))
@@ -101,7 +111,6 @@ class AlarmNotificatorFragment: Fragment() {
             val text = btn2.text.toString()
             planAlarm(getHourOfTime(text),getMinutesOfTime(text))
         }
-        return view
     }
 
     private fun showClasses(view: View) {
@@ -129,8 +138,6 @@ class AlarmNotificatorFragment: Fragment() {
                     detailsSection.visibility = View.VISIBLE
                     listView.visibility = View.VISIBLE
                 }
-
-                classesView.visibility = View.VISIBLE
             }
         }.execute()
     }

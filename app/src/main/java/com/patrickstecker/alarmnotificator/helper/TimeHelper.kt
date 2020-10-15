@@ -1,4 +1,4 @@
-package com.patrickstecker.alarmnotificator.fragments
+package com.patrickstecker.alarmnotificator.helper
 
 import java.text.DateFormatSymbols
 import java.time.LocalDate
@@ -27,6 +27,14 @@ class TimeHelper {
 
     fun getTodayDate(): String {
         val date = LocalDate.now()
+        val day = date.dayOfMonth
+        val month = date.month.value
+        val year = date.year
+        return "$day.$month.$year"
+    }
+
+    fun getTomorrowDate(): String {
+        val date = LocalDate.now().plusDays(1)
         val day = date.dayOfMonth
         val month = date.month.value
         val year = date.year

@@ -12,9 +12,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.helper.doAsync
-import com.patrickstecker.alarmnotificator.models.Lecture
-import com.patrickstecker.alarmnotificator.models.Times
 
 class DashboardFragment: Fragment() {
     val timeHelper = TimeHelper()
