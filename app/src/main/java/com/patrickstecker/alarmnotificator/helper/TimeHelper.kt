@@ -4,7 +4,7 @@ import java.text.DateFormatSymbols
 import java.time.LocalDate
 import java.util.*
 
-class TimeHelper {
+object TimeHelper {
 
     fun formatTime(hours: Int, mins: Int): String {
         var h: String = hours.toString()

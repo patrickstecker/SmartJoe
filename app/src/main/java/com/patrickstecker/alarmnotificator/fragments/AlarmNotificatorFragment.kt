@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.patrickstecker.alarmnotificator.Alarm
 import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.Storage
 import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.helper.doAsync
 import com.patrickstecker.alarmnotificator.models.Lecture
@@ -20,8 +21,6 @@ import com.patrickstecker.alarmnotificator.models.Lecture
 
 class AlarmNotificatorFragment: Fragment() {
 
-    private val timeHelper =
-        TimeHelper()
     private val lecturePlanAnalyzer = LecturePlanAnalyzer()
 
     companion object {
@@ -38,12 +37,14 @@ class AlarmNotificatorFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_alarm_notificator, container, false)
         // Inflate the layout for this fragment
 
-        showClasses(view)
-        initiateBottomSheet(view)
+        val classes = Storage.getTomorrowLectures()
+        val lesson: Lecture? = if(classes.isNotEmpty()) classes.first() else null
+        showClasses(view, classes)
+        initiateBottomSheet(view, lesson)
         return view
     }
 
-    private fun initiateBottomSheet(view: View) {
+    private fun initiateBottomSheet(view: View, lesson: Lecture?) {
         val bottomSheetDialog = BottomSheetDialog(view.context)
         val sheetView = layoutInflater.inflate(R.layout.fragment_alarm_bottom_sheet, null)
 
@@ -75,32 +76,19 @@ class AlarmNotificatorFragment: Fragment() {
                 }
                 .show()
         }
-        btn1.visibility = View.GONE
-        btn2.visibility = View.GONE
 
-        doAsync {
-            val lesson: Lecture = lecturePlanAnalyzer.getFirstClassOfToday(1)
-            if (
-                lesson.times.beginHour == 0 &&
-                lesson.times.beginMin == 0 &&
-                lesson.times.endHour == 0 &&
-                lesson.times.endMin == 0
-            ){
-                activity?.runOnUiThread {
-                    btn1.text = "--:--"
-                    btn2.text = "--:--"
-                    btn1.visibility = View.GONE
-                    btn2.visibility = View.GONE
-                }
-            } else {
-                activity?.runOnUiThread {
-                    btn1.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 60)
-                    btn2.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 30)
-                    btn1.visibility = View.VISIBLE
-                    btn2.visibility = View.VISIBLE
-                }
-            }
-        }.execute()
+        if (
+            lesson != null &&
+            lesson.isLecture
+        ){
+            btn1.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 60)
+            btn2.text = minusMins(lesson.times.beginHour, lesson.times.beginMin, 30)
+            btn1.visibility = View.VISIBLE
+            btn2.visibility = View.VISIBLE
+        } else {
+            btn1.text = "08:00"
+            btn2.text = "09:00"
+        }
 
         btn1.setOnClickListener {
             val text = btn1.text.toString()
@@ -113,33 +101,24 @@ class AlarmNotificatorFragment: Fragment() {
         }
     }
 
-    private fun showClasses(view: View) {
-        doAsync {
-                val classes = lecturePlanAnalyzer.getClassesOfToday(1)
+    private fun showClasses(view: View, classes: Array<Lecture>) {
+        val icon = view.findViewById<ImageView>(R.id.icon)
+        val title = view.findViewById<TextView>(R.id.title)
+        val text = view.findViewById<TextView>(R.id.text)
+        val detailsSection = view.findViewById<LinearLayout>(R.id.details_section)
+        val listView = view.findViewById<ListView>(R.id.card_list_view)
 
-                val icon = view.findViewById<ImageView>(R.id.icon)
-                val title = view.findViewById<TextView>(R.id.title)
-                val text = view.findViewById<TextView>(R.id.text)
-                val detailsSection = view.findViewById<LinearLayout>(R.id.details_section)
-                val listView = view.findViewById<ListView>(R.id.card_list_view)
-                val classesView = view.findViewById<LinearLayout>(R.id.classes_view)
+        icon.setImageResource(R.drawable.dhbw)
+        title.text = getString(R.string.card_uni_title)
 
-                detailsSection.visibility = View.INVISIBLE
-                listView.visibility = View.INVISIBLE
-
-                activity?.runOnUiThread{
-                icon.setImageResource(R.drawable.dhbw)
-                title.text = getString(R.string.card_uni_title)
-                text.text = getString(R.string.card_uni_text, classes.first().date)
-
-                if (classes.first().isLecture) {
-                    val adapter = activity?.let { LectureListAdapter (it, classes) }
-                    listView.adapter = adapter
-                    detailsSection.visibility = View.VISIBLE
-                    listView.visibility = View.VISIBLE
-                }
-            }
-        }.execute()
+        if (classes.isNotEmpty() && classes.first().isLecture) {
+            text.text = getString(R.string.card_uni_text, TimeHelper.getTomorrowDate())
+            val adapter = activity?.let { LectureListAdapter (it, classes) }
+            listView.adapter = adapter
+        } else {
+            text.text = getString(R.string.no_class_tomorrow)
+            detailsSection.visibility = View.GONE
+        }
     }
 
     private fun minusMins(hours: Int, mins: Int, minus: Int): String {
@@ -149,7 +128,7 @@ class AlarmNotificatorFragment: Fragment() {
             mins += 60
             hours -= 1
         }
-        return timeHelper.formatTime(hours, mins)
+        return TimeHelper.formatTime(hours, mins)
     }
 
     private fun getHourOfTime(time: String): Int {

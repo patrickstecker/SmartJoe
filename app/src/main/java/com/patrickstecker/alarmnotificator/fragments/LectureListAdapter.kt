@@ -25,11 +25,9 @@ class LectureListAdapter(
 
         title.text = item.name
         time.text =
-            (TimeHelper()
-                .formatTime(item.times.beginHour, item.times.beginMin) +
+            (TimeHelper.formatTime(item.times.beginHour, item.times.beginMin) +
                 " - " +
-                TimeHelper()
-                    .formatTime(item.times.endHour, item.times.endMin)
+                TimeHelper.formatTime(item.times.endHour, item.times.endMin)
             )
         if (item.details.isNotEmpty()) {
             var detailsText = ""

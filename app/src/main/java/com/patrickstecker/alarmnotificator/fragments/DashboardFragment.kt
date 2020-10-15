@@ -16,7 +16,6 @@ import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.helper.doAsync
 
 class DashboardFragment: Fragment() {
-    val timeHelper = TimeHelper()
 
     companion object {
         fun newInstance(): DashboardFragment {
@@ -47,7 +46,7 @@ class DashboardFragment: Fragment() {
 
         imageView.setImageResource(R.mipmap.ic_launcher)
         title.setText(R.string.card_welcome_title)
-        text.text = getString(R.string.card_welcome_date_string, timeHelper.getTodayWeekDay(), timeHelper.getTodayDate())
+        text.text = getString(R.string.card_welcome_date_string, TimeHelper.getTodayWeekDay(), TimeHelper.getTodayDate())
     }
 
     private fun buildDhbwCard(view: View) {
