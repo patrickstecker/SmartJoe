@@ -46,4 +46,9 @@ class MainActivity : AppCompatActivity() {
         transaction.addToBackStack(null)
         transaction.commit()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Storage.resetLectures()
+    }
 }

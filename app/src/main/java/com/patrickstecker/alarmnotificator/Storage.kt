@@ -28,4 +28,10 @@ object Storage {
             tomorrowLectures = analyzer.getClassesOfToday(1)
         }.execute()
     }
+
+    fun resetLectures() {
+        lectures = emptyArray()
+        todayLectures = emptyArray()
+        tomorrowLectures = emptyArray()
+    }
 }

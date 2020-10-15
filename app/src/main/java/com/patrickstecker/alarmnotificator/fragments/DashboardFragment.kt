@@ -12,8 +12,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.Storage
 import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.helper.doAsync
+import com.patrickstecker.alarmnotificator.models.Lecture
 
 class DashboardFragment: Fragment() {
 
@@ -32,7 +34,17 @@ class DashboardFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
         buildWelcomeCard(view)
-        buildDhbwCard(view)
+        var lectures = Storage.getTodayLectures()
+        if (lectures.isEmpty()) {
+            doAsync{
+                lectures = LecturePlanAnalyzer().getClassesOfToday(0)
+                activity?.runOnUiThread {
+                    buildDhbwCard(view, lectures)
+                }
+            }.execute()
+        } else {
+            buildDhbwCard(view, lectures)
+        }
 
         return view
     }
@@ -49,31 +61,27 @@ class DashboardFragment: Fragment() {
         text.text = getString(R.string.card_welcome_date_string, TimeHelper.getTodayWeekDay(), TimeHelper.getTodayDate())
     }
 
-    private fun buildDhbwCard(view: View) {
+    private fun buildDhbwCard(view: View, lectures: Array<Lecture>) {
         val card = view.findViewById<ConstraintLayout>(R.id.dhbw_item)
         card.visibility = View.INVISIBLE
-        doAsync {
-            val lectures = LecturePlanAnalyzer().getClassesOfToday(0)
 
-            val imageView = card.findViewById(R.id.icon) as ImageView
-            val title = card.findViewById(R.id.title) as TextView
-            val text = card.findViewById(R.id.text) as TextView
-            val listView = card.findViewById(R.id.card_list_view) as ListView
-            val detailsSection = card.findViewById(R.id.details_section) as LinearLayout
+        val imageView = card.findViewById(R.id.icon) as ImageView
+        val title = card.findViewById(R.id.title) as TextView
+        val text = card.findViewById(R.id.text) as TextView
+        val listView = card.findViewById(R.id.card_list_view) as ListView
+        val detailsSection = card.findViewById(R.id.details_section) as LinearLayout
 
-            activity?.runOnUiThread{
-                imageView.setImageResource(R.drawable.dhbw)
-                title.setText(R.string.card_uni_title)
+        imageView.setImageResource(R.drawable.dhbw)
+        title.setText(R.string.card_uni_title)
 
-                if (lectures.isNotEmpty()) {
-                    text.text = getString(R.string.card_uni_text, lectures[0].date)
-                    val adapter = activity?.let { LectureListAdapter(it, lectures) }
-                    listView.adapter = adapter
-                } else {
-                    detailsSection.visibility = View.GONE
-                }
-                card.visibility = View.VISIBLE
-            }
-        }.execute()
+        if (lectures.isNotEmpty()) {
+            text.text = getString(R.string.card_uni_text, lectures[0].date)
+            val adapter = activity?.let { LectureListAdapter(it, lectures) }
+            listView.adapter = adapter
+        } else {
+            detailsSection.visibility = View.GONE
+        }
+        card.visibility = View.VISIBLE
+
     }
 }
