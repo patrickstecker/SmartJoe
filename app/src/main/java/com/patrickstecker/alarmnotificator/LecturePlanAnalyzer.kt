@@ -15,17 +15,17 @@ class LecturePlanAnalyzer {
         const val URL = "https://vorlesungsplan.dhbw-mannheim.de/index.php?action=view&uid=7431001"
     }
 
-    private fun getPlan(): Document {
-        return Jsoup.connect(URL + calculateTimeStamp(1)).get()
+    private fun getPlan(weekOffset: Int): Document {
+        return Jsoup.connect(URL + calculateTimeStamp(weekOffset)).get()
     }
 
-    private fun calculateTimeStamp(dayOffset: Int): String {
+    private fun calculateTimeStamp(weekOffset: Int): String {
         val dayMillis = 24 * 60 * 60
-        val time = Date().time / 1000 + (dayOffset) * dayMillis
+        val time = Date().time / 1000 + (weekOffset * 7) * dayMillis
         return "&date=$time"
     }
 
-    private fun convertElementToLectures(element: Element, date: String): ArrayList<Lecture> {
+    private fun convertDayElementToLectures(element: Element, date: String): ArrayList<Lecture> {
         val lectures = ArrayList<Lecture>()
         var first = true
         for (item in element.getElementsByTag("li")) {
@@ -72,26 +72,19 @@ class LecturePlanAnalyzer {
     }
 
     fun getClassesOfToday(dayOffset: Long): Array<Lecture> {
-        val doc = getPlan()
+        val doc = getPlan(0)
         val date = if (dayOffset > 0) LocalDate.now().plusDays(dayOffset) else LocalDate.now()
         var lectures = ArrayList<Lecture>()
 
         val d = if (date.dayOfMonth < 10) "0" + date.dayOfMonth else "" + date.dayOfMonth //if (date.day < 10) "0" + date.day else "" + date.day
         val m = if (date.monthValue < 10) "0" + date.monthValue else "" + date.monthValue //if (date.month < 10) "0" + date.day else "" + date.day
 
-        var next = false
-        val week: Elements = doc.getElementsByAttributeValue("data-role", "listview")
+        val plan = doc.getElementsByAttributeValue("data-role", "content")
+        val week: Elements = plan.first().getElementsByTag("ul")
         for (elem: Element in week) {
-            if(next) {
+            if (elem.children().first().text().contains(", $d.$m", true)) {
+                lectures = convertDayElementToLectures(elem, "$d.$m.")
                 break
-            }
-            for (child: Element in elem.children()) {
-                if (next) {
-                    lectures = convertElementToLectures(elem, "$d.$m.")
-                }
-                if (elem.text().contains(", $d.$m", true)) {
-                    next = true
-                }
             }
         }
         return lectures.toTypedArray()
@@ -106,6 +99,20 @@ class LecturePlanAnalyzer {
         val beginHour = time[0].split(":")[0].toInt()
 
         return  Times(endMin, endHour, beginMin, beginHour)
+    }
+
+    fun getLectureWeek(weekOffset: Int): Array<Array<Lecture>> {
+        val doc = getPlan(weekOffset)
+        val lectures = ArrayList<ArrayList<Lecture>>()
+
+        val plan = doc.getElementsByAttributeValue("data-role", "content")
+        val week: Elements = plan.first().getElementsByTag("ul")
+        for (elem: Element in week) {
+            val date = elem.children().first().text().substringAfter(", ")
+            lectures.add(convertDayElementToLectures(elem, date))
+        }
+
+        return (lectures.map { lec -> lec.toTypedArray() }).toTypedArray()
     }
 
     fun tomorrowIsALesson(): Boolean {

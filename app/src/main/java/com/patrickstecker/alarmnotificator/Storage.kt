@@ -24,6 +24,7 @@ object Storage {
     fun updateLectures() {
         doAsync{
             val analyzer = LecturePlanAnalyzer()
+            lectures = analyzer.getLectureWeek(0)
             todayLectures = analyzer.getClassesOfToday(0)
             tomorrowLectures = analyzer.getClassesOfToday(1)
         }.execute()
