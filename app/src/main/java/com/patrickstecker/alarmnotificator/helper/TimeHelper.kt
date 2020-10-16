@@ -49,4 +49,15 @@ object TimeHelper {
         val days = DateFormatSymbols(Locale.getDefault()).weekdays
         return days[i]
     }
+
+    fun getDateOfString(date: String): LocalDate {
+        val day = date.split('.')[0].toInt()
+        val month = date.split('.')[1].toInt()
+        val year = LocalDate.now().year
+        return LocalDate.of(year, month, day)
+    }
+
+    fun dateToString(date: LocalDate): String {
+        return "${date.dayOfMonth}.${date.month.value}"
+    }
 }

@@ -1,5 +1,6 @@
 package com.patrickstecker.alarmnotificator.services
 
+import com.patrickstecker.alarmnotificator.helper.TimeHelper
 import com.patrickstecker.alarmnotificator.models.Lecture
 import com.patrickstecker.alarmnotificator.models.Times
 import org.jsoup.Jsoup
@@ -111,7 +112,11 @@ class LecturePlanAnalyzer {
             val date = elem.children().first().text().substringAfter(", ")
             lectures.add(convertDayElementToLectures(elem, date))
         }
-
+        val saturdayDate = TimeHelper.getDateOfString(lectures.last().first().date)
+        val sundayDate = TimeHelper.dateToString(saturdayDate.plusDays(1))
+        lectures.add(arrayListOf(
+            Lecture("", Times(0,0,0,0), sundayDate, ArrayList(), false)
+        ))
         return (lectures.map { lec -> lec.toTypedArray() }).toTypedArray()
     }
 
