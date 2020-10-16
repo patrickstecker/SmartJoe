@@ -73,6 +73,9 @@ class DashboardFragment: Fragment() {
         val text = card.findViewById(R.id.text) as TextView
         val listView = card.findViewById(R.id.card_list_view) as ListView
         val detailsSection = card.findViewById(R.id.details_section) as LinearLayout
+        val showLectureWeek = card.findViewById<ImageView>(R.id.open_week_view)
+
+        showLectureWeek.visibility = View.VISIBLE
 
         imageView.setImageResource(R.drawable.dhbw)
         title.setText(R.string.card_uni_title)
