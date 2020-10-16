@@ -10,18 +10,18 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.patrickstecker.alarmnotificator.Alarm
-import com.patrickstecker.alarmnotificator.LecturePlanAnalyzer
+import com.patrickstecker.alarmnotificator.services.Alarm
+import com.patrickstecker.alarmnotificator.services.LecturePlanAnalyzer
 import com.patrickstecker.alarmnotificator.R
 import com.patrickstecker.alarmnotificator.Storage
 import com.patrickstecker.alarmnotificator.helper.TimeHelper
-import com.patrickstecker.alarmnotificator.helper.doAsync
 import com.patrickstecker.alarmnotificator.models.Lecture
 
 
 class AlarmNotificatorFragment: Fragment() {
 
-    private val lecturePlanAnalyzer = LecturePlanAnalyzer()
+    private val lecturePlanAnalyzer =
+        LecturePlanAnalyzer()
 
     companion object {
         fun newInstance(): AlarmNotificatorFragment {

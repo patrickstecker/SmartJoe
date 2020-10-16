@@ -40,4 +40,13 @@ object TimeHelper {
         val year = date.year
         return "$day.$month.$year"
     }
+
+    fun getWeekDay(pos: Int): String {
+        var i = pos + 2
+        if (i > 7) {
+            i -=7
+        }
+        val days = DateFormatSymbols(Locale.getDefault()).weekdays
+        return days[i]
+    }
 }

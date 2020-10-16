@@ -1,4 +1,4 @@
-package com.patrickstecker.alarmnotificator
+package com.patrickstecker.alarmnotificator.services
 
 import android.app.*
 import android.content.BroadcastReceiver
@@ -7,8 +7,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.PowerManager
 import android.widget.Toast
-import java.time.LocalDate
-import java.time.LocalTime
+import com.patrickstecker.alarmnotificator.activities.MainActivity
+import com.patrickstecker.alarmnotificator.R
 import java.util.*
 
 

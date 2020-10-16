@@ -25,4 +25,5 @@
     <string name="card_uni_title">Vorlesungen</string>
     <string name="no_class_today">Du hast heute keine Vorlesungen.</string>
     <string name="no_class_tomorrow">Du hast morgen keine Vorlesungen.</string>
+    <string name="no_class_on">Du hast am %1$s keine Vorlesungen.</string>
 </resources>

@@ -1,10 +1,12 @@
-package com.patrickstecker.alarmnotificator
+package com.patrickstecker.alarmnotificator.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.patrickstecker.alarmnotificator.R
+import com.patrickstecker.alarmnotificator.Storage
 import com.patrickstecker.alarmnotificator.fragments.AlarmNotificatorFragment
 import com.patrickstecker.alarmnotificator.fragments.DashboardFragment
 import com.patrickstecker.alarmnotificator.fragments.TodoListFragment
@@ -18,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         Storage.updateLectures()
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-        bottomNav.selectedItemId = R.id.action_home
+        bottomNav.selectedItemId =
+            R.id.action_home
         bottomNav.setOnNavigationItemSelectedListener {item ->
             when(item.itemId) {
                 R.id.action_alarm -> {

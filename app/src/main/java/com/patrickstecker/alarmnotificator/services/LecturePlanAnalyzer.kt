@@ -1,4 +1,4 @@
-package com.patrickstecker.alarmnotificator
+package com.patrickstecker.alarmnotificator.services
 
 import com.patrickstecker.alarmnotificator.models.Lecture
 import com.patrickstecker.alarmnotificator.models.Times

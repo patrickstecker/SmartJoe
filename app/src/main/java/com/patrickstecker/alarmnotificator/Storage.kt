@@ -2,7 +2,7 @@ package com.patrickstecker.alarmnotificator
 
 import com.patrickstecker.alarmnotificator.helper.doAsync
 import com.patrickstecker.alarmnotificator.models.Lecture
-import kotlin.collections.ArrayList
+import com.patrickstecker.alarmnotificator.services.LecturePlanAnalyzer
 
 object Storage {
     private var lectures: Array<Array<Lecture>> = emptyArray()     // Lectures of current week and next week
@@ -23,7 +23,8 @@ object Storage {
 
     fun updateLectures() {
         doAsync{
-            val analyzer = LecturePlanAnalyzer()
+            val analyzer =
+                LecturePlanAnalyzer()
             lectures = analyzer.getLectureWeek(0)
             todayLectures = analyzer.getClassesOfToday(0)
             tomorrowLectures = analyzer.getClassesOfToday(1)
