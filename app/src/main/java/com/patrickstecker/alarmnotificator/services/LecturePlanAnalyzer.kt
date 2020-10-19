@@ -36,6 +36,9 @@ class LecturePlanAnalyzer {
                 lectures.add(convertElementToLecture(item, date))
             }
         }
+        if (lectures.isEmpty()) {
+            lectures.add(Lecture("", Times(0,0,0,0), date, ArrayList(),false))
+        }
         return lectures
     }
 
